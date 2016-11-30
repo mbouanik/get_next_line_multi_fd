@@ -6,7 +6,7 @@
 /*   By: mbouanik <mbouanik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/21 03:08:36 by mbouanik          #+#    #+#             */
-/*   Updated: 2016/11/29 13:35:10 by mbouanik         ###   ########.fr       */
+/*   Updated: 2016/11/30 10:10:47 by mbouanik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,30 +24,58 @@ static t_fd			*ft_get_new_fd(int fd)
 	return (get);
 }
 
-void				ft_lst_get_del(t_fd *index, t_fd **alst)
+static int		ft_assign(t_fd **get, char *buf, t_fd **index, char **line)
 {
-	t_fd *tmp;
+	char			*tmp;
+	char			*tmp2;
 
-	tmp = NULL;
-	if (index->next == NULL)
+	if (ft_is_present(buf, '\n'))
 	{
-		free(*alst);
-		*alst = NULL;
+		if ((*get)->remain == NULL)
+			*line = ft_strdup_until(buf, '\n');
+		else
+		{
+			tmp = (*get)->remain;
+			tmp2 = ft_strdup_until(buf, '\n');
+			*line = ft_strjoin((*get)->remain, tmp2);
+			ft_strdel(&tmp2);
+			ft_strdel(&tmp);
+		}
+		(*get)->remain = ft_strdup_after(buf, '\n');
+		*get = *index;
+		return (1);
 	}
-	tmp = index;
-	while ((*alst)->next != tmp)
-		*alst = (*alst)->next;
-	(*alst)->next = tmp->next;
-	tmp = NULL;
-	free(tmp);
+	if ((*get)->remain == NULL)
+		(*get)->remain = ft_strdup(buf);
+	else
+	{
+		tmp = (*get)->remain;
+		(*get)->remain = ft_strjoin((*get)->remain, buf);
+		ft_strdel(&tmp);
+	}
+	return (0);
+}
+
+int		ft_remain(t_fd **get, t_fd **index, char **line)
+{
+	char	*tmp;
+
+	if ((*get)->remain != NULL && ft_is_present((*get)->remain, '\n'))
+	{
+		tmp = (*get)->remain;
+		*line = ft_strdup_until((*get)->remain, '\n');
+		(*get)->remain = ft_strdup_after((*get)->remain, '\n');
+		ft_strdel(&tmp);
+		*get = *index;
+		return (1);
+	}
+	return (0);
 }
 
 int					get_next_line(const int fd, char **line)
 {
 	int				ret;
 	char			buf[BUFF_SIZE + 1];
-	char			*tmp;
-	char			*tmp2;
 	static t_fd		*get_next = NULL;
 	t_fd			*index;
 
@@ -63,50 +91,21 @@ int					get_next_line(const int fd, char **line)
 	}
 	if (get_next->fd < 0)
 		return (-1);
-	if (get_next->remain != NULL && ft_is_present(get_next->remain, '\n'))
-	{
-		tmp = get_next->remain;
-		*line = ft_strdup_until(get_next->remain, '\n');
-		get_next->remain = ft_strdup_after(get_next->remain, '\n');
-		ft_strdel(&tmp);
-		get_next = index;
+	if (ft_remain(&get_next, &index, &(*line)))
 		return (1);
-	}
+
 	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
 		if (ret < 0)
 			return (-1);
 		buf[ret] = '\0';
-		if (ft_is_present(buf, '\n'))
-		{
-			if (get_next->remain == NULL)
-				*line = ft_strdup_until(buf, '\n');
-			else
-			{
-				tmp = get_next->remain;
-				tmp2 = ft_strdup_until(buf, '\n');
-				*line = ft_strjoin(get_next->remain, tmp2);
-				ft_strdel(&tmp2);
-				ft_strdel(&tmp);
-			}
-			get_next->remain = ft_strdup_after(buf, '\n');
-			get_next = index;
+		if (ft_assign(&get_next, buf, &index, &(*line)))
 			return (1);
-		}
-		if (get_next->remain == NULL)
-			get_next->remain = ft_strdup(buf);
-		else
-		{
-			tmp = get_next->remain;
-			get_next->remain = ft_strjoin(get_next->remain, buf);
-			ft_strdel(&tmp);
-		}
 	}
 	if (ret == 0 && get_next->remain != NULL && ft_strlen(get_next->remain))
 	{
 		*line = ft_strdup(get_next->remain);
 		ft_strdel(&(get_next->remain));
-		// ft_lst_get_del(index, &get_next);
 		get_next = index;
 		return (1);
 	}
