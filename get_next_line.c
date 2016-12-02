@@ -6,7 +6,7 @@
 /*   By: mbouanik <mbouanik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/21 03:08:36 by mbouanik          #+#    #+#             */
-/*   Updated: 2016/12/02 15:01:21 by mbouanik         ###   ########.fr       */
+/*   Updated: 2016/12/02 15:26:40 by mbouanik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static t_fd			*ft_get_new_fd(t_fd **get_next, int fd)
 {
-	t_fd *get;
+	t_fd			*get;
 
 	get = (t_fd *)malloc(sizeof(t_fd));
 	get->fd = fd;
@@ -29,7 +29,7 @@ static t_fd			*ft_get_new_fd(t_fd **get_next, int fd)
 	return (get);
 }
 
-static int		ft_assign(t_fd **get, char *buf, char **line)
+static int			ft_assign(t_fd **get, char *buf, char **line)
 {
 	char			*tmp;
 	char			*tmp2;
@@ -49,18 +49,15 @@ static int		ft_assign(t_fd **get, char *buf, char **line)
 		(*get)->remain = ft_strdup_after(buf, '\n');
 		return (1);
 	}
-	if ((*get)->remain == NULL)
-		(*get)->remain = ft_strdup(buf);
-	else
-	{
-		tmp = (*get)->remain;
-		(*get)->remain = ft_strjoin((*get)->remain, buf);
-		ft_strdel(&tmp);
-	}
+	if ((*get)->remain == NULL && ((*get)->remain = ft_strdup(buf)))
+		return (0);
+	tmp = (*get)->remain;
+	(*get)->remain = ft_strjoin((*get)->remain, buf);
+	ft_strdel(&tmp);
 	return (0);
 }
 
-int		ft_remain(t_fd **get, char **line)
+static int			ft_remain(t_fd **get, char **line)
 {
 	char	*tmp;
 
@@ -75,28 +72,31 @@ int		ft_remain(t_fd **get, char **line)
 	return (0);
 }
 
+static void			ft_lst_new(t_fd **get_next, int fd)
+{
+	t_fd			*index;
+
+	if (*get_next == NULL)
+		*get_next = ft_get_new_fd(&(*get_next), fd);
+	index = *get_next;
+	index = index->next;
+	while (index != *get_next)
+	{
+		if (index->fd == fd && (*get_next = index))
+			break ;
+		index = index->next;
+	}
+	if (index->fd != fd)
+		*get_next = ft_get_new_fd(&(*get_next), fd);
+}
+
 int					get_next_line(const int fd, char **line)
 {
 	int				ret;
 	char			buf[BUFF_SIZE + 1];
 	static t_fd		*get_next = NULL;
-	t_fd			*index;
 
-	if (get_next == NULL)
-		get_next = ft_get_new_fd(&get_next, fd);
-	index = get_next;
-	index = index->next;
-	while (index != get_next)
-	{
-		if (index->fd == fd)
-		{
-			get_next = index;
-			break ;
-		}
-		index = index->next;
-	}
-	if (index->fd != fd)
-		get_next = ft_get_new_fd(&get_next, fd);
+	ft_lst_new(&get_next, fd);
 	if (get_next->fd < 0)
 		return (-1);
 	if (ft_remain(&get_next, &(*line)))

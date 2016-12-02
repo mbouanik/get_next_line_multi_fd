@@ -6,13 +6,13 @@
 /*   By: mbouanik <mbouanik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/21 03:11:14 by mbouanik          #+#    #+#             */
-/*   Updated: 2016/11/29 14:56:25 by mbouanik         ###   ########.fr       */
+/*   Updated: 2016/12/02 15:16:10 by mbouanik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFF_SIZE 32
+# define BUFF_SIZE 500
 # include "libft/libft.h"
 
 typedef struct		s_fd
