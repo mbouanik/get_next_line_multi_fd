@@ -6,7 +6,7 @@
 /*   By: mbouanik <mbouanik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/21 03:08:36 by mbouanik          #+#    #+#             */
-/*   Updated: 2016/12/02 15:26:40 by mbouanik         ###   ########.fr       */
+/*   Updated: 2016/12/02 17:21:52 by mbouanik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static void			ft_lst_new(t_fd **get_next, int fd)
 	t_fd			*index;
 
 	if (*get_next == NULL)
-		*get_next = ft_get_new_fd(&(*get_next), fd);
+		*get_next = ft_get_new_fd(get_next, fd);
 	index = *get_next;
 	index = index->next;
 	while (index != *get_next)
@@ -87,7 +87,7 @@ static void			ft_lst_new(t_fd **get_next, int fd)
 		index = index->next;
 	}
 	if (index->fd != fd)
-		*get_next = ft_get_new_fd(&(*get_next), fd);
+		*get_next = ft_get_new_fd(get_next, fd);
 }
 
 int					get_next_line(const int fd, char **line)
@@ -99,14 +99,14 @@ int					get_next_line(const int fd, char **line)
 	ft_lst_new(&get_next, fd);
 	if (get_next->fd < 0)
 		return (-1);
-	if (ft_remain(&get_next, &(*line)))
+	if (ft_remain(&get_next, line))
 		return (1);
 	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
 		if (ret < 0)
 			return (-1);
 		buf[ret] = '\0';
-		if (ft_assign(&get_next, buf, &(*line)))
+		if (ft_assign(&get_next, buf, line))
 			return (1);
 	}
 	if (ret == 0 && get_next->remain != NULL && ft_strlen(get_next->remain))
@@ -115,6 +115,6 @@ int					get_next_line(const int fd, char **line)
 		ft_strdel(&(get_next->remain));
 		return (1);
 	}
-	ft_strdel(&(*line));
+	ft_strdel(line);
 	return (0);
 }
