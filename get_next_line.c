@@ -6,7 +6,7 @@
 /*   By: mbouanik <mbouanik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/21 03:08:36 by mbouanik          #+#    #+#             */
-/*   Updated: 2016/12/02 17:21:52 by mbouanik         ###   ########.fr       */
+/*   Updated: 2016/12/22 21:55:06 by mbouanik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ static int			ft_assign(t_fd **get, char *buf, char **line)
 			ft_strdel(&tmp);
 		}
 		(*get)->remain = ft_strdup_after(buf, '\n');
+		ft_strdel(&buf);
 		return (1);
 	}
 	if ((*get)->remain == NULL && ((*get)->remain = ft_strdup(buf)))
@@ -93,17 +94,16 @@ static void			ft_lst_new(t_fd **get_next, int fd)
 int					get_next_line(const int fd, char **line)
 {
 	int				ret;
-	char			buf[BUFF_SIZE + 1];
+	char			*buf;
 	static t_fd		*get_next = NULL;
 
 	ft_lst_new(&get_next, fd);
-	if (get_next->fd < 0)
-		return (-1);
 	if (ft_remain(&get_next, line))
 		return (1);
+	buf = ft_strnew(BUFF_SIZE);
 	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
-		if (ret < 0)
+		if (ret < 0 || get_next->fd < 0)
 			return (-1);
 		buf[ret] = '\0';
 		if (ft_assign(&get_next, buf, line))
