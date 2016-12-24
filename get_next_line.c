@@ -97,17 +97,16 @@ int					get_next_line(const int fd, char **line)
 	char			*buf;
 	static t_fd		*get_next = NULL;
 
-	if (get_next->fd < 0)
+	if (fd < 0)
 		return (-1);
 	ft_lst_new(&get_next, fd);
 	if (ft_remain(&get_next, line))
 		return (1);
-	buf = ft_strnew(BUFF_SIZE);
+	buf = ft_memalloc(BUFF_SIZE + 1);
 	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
 		if (ret < 0)
 			return (-1);
-		buf[ret] = '\0';
 		if (ft_assign(&get_next, buf, line))
 			return (1);
 	}
