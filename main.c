@@ -20,6 +20,6 @@ int main(int ac, char **av)
 
 	fd = open(av[1], O_RDONLY);
 	while (get_next_line(fd, &line))
-	ft_putendl(line);
+		ft_putendl(line);
 	return 0;
 }

@@ -115,6 +115,5 @@ int					get_next_line(const int fd, char **line)
 		ft_strdel(&(get_next->remain));
 		return (1);
 	}
-	ft_strdel(line);
 	return (0);
 }
