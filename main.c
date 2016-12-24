@@ -17,9 +17,10 @@ int main(int ac, char **av)
 {
 	int fd;
 	char *line;
-
-	fd = open(av[1], O_RDONLY);
+	ac = 1;
+	fd = open(av[ac], O_RDONLY);
 	while (get_next_line(fd, &line))
 		ft_putendl(line);
+	ft_strdel(&line);
 	return 0;
 }
