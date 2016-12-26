@@ -83,8 +83,11 @@ static void			ft_lst_new(t_fd **get_next, int fd)
 	index = index->next;
 	while (index != *get_next)
 	{
-		if (index->fd == fd && (*get_next = index))
+		if (index->fd == fd)
+		{
+			*get_next = index;
 			break ;
+		}
 		index = index->next;
 	}
 	if (index->fd != fd)
