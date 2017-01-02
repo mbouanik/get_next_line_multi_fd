@@ -79,8 +79,8 @@ static void			ft_lst_new(t_fd **get_next, int fd)
 
 	if (*get_next == NULL)
 	{
-			*get_next = ft_get_new_fd(get_next, fd);
-			return ;
+		*get_next = ft_get_new_fd(get_next, fd);
+		return ;
 	}
 	index = *get_next;
 	index = index->next;
@@ -93,7 +93,7 @@ static void			ft_lst_new(t_fd **get_next, int fd)
 		}
 		index = index->next;
 	}
-//	if (index->fd != fd)
+	// if (index->fd != fd)
 		*get_next = ft_get_new_fd(get_next, fd);
 }
 
