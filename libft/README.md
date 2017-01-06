@@ -1,0 +1,2 @@
+# libft
+libft in C
