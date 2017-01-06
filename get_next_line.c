@@ -6,7 +6,7 @@
 /*   By: mbouanik <mbouanik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/21 03:08:36 by mbouanik          #+#    #+#             */
-/*   Updated: 2016/12/22 21:55:06 by mbouanik         ###   ########.fr       */
+/*   Updated: 2017/01/06 15:11:43 by mbouanik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,7 @@ static void			ft_lst_new(t_fd **get_next, int fd)
 		}
 		index = index->next;
 	}
-	// if (index->fd != fd)
-		*get_next = ft_get_new_fd(get_next, fd);
+	*get_next = ft_get_new_fd(get_next, fd);
 }
 
 int					get_next_line(const int fd, char **line)
