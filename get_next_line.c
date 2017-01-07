@@ -6,7 +6,7 @@
 /*   By: mbouanik <mbouanik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/21 03:08:36 by mbouanik          #+#    #+#             */
-/*   Updated: 2017/01/06 15:11:43 by mbouanik         ###   ########.fr       */
+/*   Updated: 2017/01/07 21:07:59 by mbouanik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,22 +78,17 @@ static void			ft_lst_new(t_fd **get_next, int fd)
 	t_fd			*index;
 
 	if (*get_next == NULL)
-	{
 		*get_next = ft_get_new_fd(get_next, fd);
-		return ;
-	}
 	index = *get_next;
 	index = index->next;
 	while (index != *get_next)
 	{
-		if (index->fd == fd)
-		{
-			*get_next = index;
-			return ;
-		}
+		if (index->fd == fd && (*get_next = index))
+			break ;
 		index = index->next;
 	}
-	*get_next = ft_get_new_fd(get_next, fd);
+	if (index->fd != fd)
+		*get_next = ft_get_new_fd(get_next, fd);
 }
 
 int					get_next_line(const int fd, char **line)
@@ -102,9 +97,9 @@ int					get_next_line(const int fd, char **line)
 	char			*buf;
 	static t_fd		*get_next = NULL;
 
-	if (fd < 0)
-		return (-1);
 	ft_lst_new(&get_next, fd);
+	if (get_next->fd < 0)
+		return (-1);
 	if (ft_remain(&get_next, line))
 		return (1);
 	buf = ft_memalloc(BUFF_SIZE + 1);
@@ -112,6 +107,7 @@ int					get_next_line(const int fd, char **line)
 	{
 		if (ret < 0)
 			return (-1);
+		buf[ret] = '\0';
 		if (ft_assign(&get_next, buf, line))
 			return (1);
 	}
